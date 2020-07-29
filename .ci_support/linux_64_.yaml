@@ -1,5 +1,5 @@
 arch:
-- gpu
+- gpu_9.2
 c_compiler:
 - gcc
 channel_sources:

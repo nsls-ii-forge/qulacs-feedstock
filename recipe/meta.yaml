@@ -17,15 +17,6 @@ build:
   skip: true  # [cuda_compiler_version in (undefined, "None")]
   skip: true  # [not linux]
 
-#requirements:
-#  build:
-#    - {{ compiler("c") }}
-#    - {{ compiler("cxx") }}
-#  host:
-#    - python
-#    - pip
-#    - setuptools
-
 outputs:
   # the name "qulacs-conda" is reserved as a metapackage to ensure mutual exclusiveness
   - name: {{ name|lower }}-conda
@@ -61,7 +52,7 @@ outputs:
       run:
         - python
         - numpy
-        - qulacs-conda {{ version }} gpu
+        - qulacs-conda {{ version }} gpu_{{ cuda_compiler_version }}
     test:
       imports:
         - qulacs
