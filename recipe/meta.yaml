@@ -19,6 +19,8 @@ build:
   skip: true  # [not linux]
 
   script:
+    - export C_COMPILER=x86_64-conda-linux-gnu-gcc
+    - export CXX_COMPILER=x86_64-conda-linux-gnu-g++
     - {{ PYTHON }} setup_gpu.py install -vv  # [cuda_compiler_version not in (undefined, "None")]
 
   missing_dso_whitelist:
