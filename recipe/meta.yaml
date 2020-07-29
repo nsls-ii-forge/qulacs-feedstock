@@ -3,8 +3,7 @@
 {% set sha256 = "7c3909ae63d352ed4b1481d63093cb5971c120c7577353e591a323b7a3d41ada" %}
 
 package:
-  # must not match any outputs for requirements to be handled correctly
-  name: qulacs-conda
+  name: {{ name|lower }}-conda
   version: {{ version }}
 
 source:
@@ -18,36 +17,47 @@ build:
   skip: true  # [cuda_compiler_version in (undefined, "None")]
   skip: true  # [not linux]
 
-#requirements:
-#  #build:
-#  #  - {{ compiler("c") }}
-#  #  - {{ compiler("cxx") }}
-#  #  - {{ compiler("cuda") }}
-#  host:
-#    - python
-#    - pip
-#    - setuptools
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - {{ compiler("cxx") }}
+  host:
+    - python
+    - pip
+    - setuptools
 
 outputs:
-  # this is the metapackage to ensure mutual exclusiveness
-  - name: {{ name|lower }}-mutex
+  # the name "qulacs-conda" is reserved as a metapackage to ensure mutual exclusiveness
+  - name: {{ name|lower }}-conda
     version: {{ version }}
     build:
       number: 0
       string: {{ arch }}
     test:
       commands:
-        - echo "qulacs-mutex metapackage is built"
+        - echo "qulacs-conda metapackage is built"
 
   - name: {{ name|lower }}-gpu  # [cuda_compiler_version not in (undefined, "None")]
     version: {{ version }}
+    #files:
+    #  - lib/python{{ python }}/site-packages/Qulacs_GPU*
     build:
+      #preserve_egg_dir: True
       script:
         # GCC and GXX are defined by conda-build
         - export C_COMPILER="${GCC}"
         - export CXX_COMPILER="${GXX}"
         - export CUDA_BIN_PATH=/usr/local/cuda/  # bad interaction between cmake and cuda on CF?
-        - python setup_gpu.py install -vv --single-version-externally-managed --record record.txt
+        #- mv setup_gpu.py setup.py
+        #- python -m pip install . --no-deps -vv
+        #- python setup_gpu.py install -vv --single-version-externally-managed --record=record.txt
+        - {{ PYTHON }} setup_gpu.py install -vv
+        #- python setup_gpu.py install -vv --single-version-externally-managed --record=record.txt bdist_egg
+        #- python setup_gpu.py install bdist_egg -vv
+        #- python -c "import qulacs"
+      #script: build_do_not_use.sh
+      #always_include_files:
+      #  - lib/python{{ python }}/site-packages/Qulacs_GPU-{{ version }}-py{{ python }}-linux-x86_64.egg/*
       missing_dso_whitelist:
         - '*/libcuda.*'
     requirements:
@@ -56,18 +66,20 @@ outputs:
         - {{ compiler("cxx") }}
         - {{ compiler("cuda") }}
         - cmake
-        - make  # [not win]
-        - setuptools
+        - make
       host:
         - python
         - pip
+        - setuptools
       run:
         - python
         - numpy
-        - qulacs-mutex {{ version }} gpu
+        - qulacs-conda {{ version }} gpu
     test:
-      #imports:
-      #  - qulacs
+      imports:
+        - qulacs
+      requires:
+        - scipy
       source_files:
         - python/test/test_qulacs.py
       commands:

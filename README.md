@@ -48,7 +48,7 @@ Current release info
 
 | Name | Downloads | Version | Platforms |
 | --- | --- | --- | --- |
-| [![Conda Recipe](https://img.shields.io/badge/recipe-qulacs-green.svg)](https://anaconda.org/nsls2forge/qulacs) | [![Conda Downloads](https://img.shields.io/conda/dn/nsls2forge/qulacs.svg)](https://anaconda.org/nsls2forge/qulacs) | [![Conda Version](https://img.shields.io/conda/vn/nsls2forge/qulacs.svg)](https://anaconda.org/nsls2forge/qulacs) | [![Conda Platforms](https://img.shields.io/conda/pn/nsls2forge/qulacs.svg)](https://anaconda.org/nsls2forge/qulacs) |
+| [![Conda Recipe](https://img.shields.io/badge/recipe-qulacs--conda-green.svg)](https://anaconda.org/nsls2forge/qulacs-conda) | [![Conda Downloads](https://img.shields.io/conda/dn/nsls2forge/qulacs-conda.svg)](https://anaconda.org/nsls2forge/qulacs-conda) | [![Conda Version](https://img.shields.io/conda/vn/nsls2forge/qulacs-conda.svg)](https://anaconda.org/nsls2forge/qulacs-conda) | [![Conda Platforms](https://img.shields.io/conda/pn/nsls2forge/qulacs-conda.svg)](https://anaconda.org/nsls2forge/qulacs-conda) |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-qulacs--gpu-green.svg)](https://anaconda.org/nsls2forge/qulacs-gpu) | [![Conda Downloads](https://img.shields.io/conda/dn/nsls2forge/qulacs-gpu.svg)](https://anaconda.org/nsls2forge/qulacs-gpu) | [![Conda Version](https://img.shields.io/conda/vn/nsls2forge/qulacs-gpu.svg)](https://anaconda.org/nsls2forge/qulacs-gpu) | [![Conda Platforms](https://img.shields.io/conda/pn/nsls2forge/qulacs-gpu.svg)](https://anaconda.org/nsls2forge/qulacs-gpu) |
 
 Installing qulacs-conda
@@ -60,16 +60,16 @@ Installing `qulacs-conda` from the `nsls2forge` channel can be achieved by addin
 conda config --add channels nsls2forge
 ```
 
-Once the `nsls2forge` channel has been enabled, `qulacs, qulacs-gpu` can be installed with:
+Once the `nsls2forge` channel has been enabled, `qulacs-conda, qulacs-gpu` can be installed with:
 
 ```
-conda install qulacs qulacs-gpu
+conda install qulacs-conda qulacs-gpu
 ```
 
-It is possible to list all of the versions of `qulacs` available on your platform with:
+It is possible to list all of the versions of `qulacs-conda` available on your platform with:
 
 ```
-conda search qulacs --channel nsls2forge
+conda search qulacs-conda --channel nsls2forge
 ```
 
 
