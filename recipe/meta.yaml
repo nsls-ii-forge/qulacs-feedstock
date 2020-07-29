@@ -30,14 +30,14 @@ build:
 
 outputs:
   # this is the metapackage to ensure mutual exclusiveness
-  - name: {{ name|lower }}
+  - name: {{ name|lower }}-mutex
     version: {{ version }}
     build:
       number: 0
       string: {{ arch }}
     test:
       commands:
-        - echo "qulacs metapackage is built"
+        - echo "qulacs-mutex metapackage is built"
 
   - name: {{ name|lower }}-gpu  # [cuda_compiler_version not in (undefined, "None")]
     version: {{ version }}
@@ -47,7 +47,7 @@ outputs:
         - export C_COMPILER="${GCC}"
         - export CXX_COMPILER="${GXX}"
         - export CUDA_BIN_PATH=/usr/local/cuda/  # bad interaction between cmake and cuda on CF?
-        - python setup_gpu.py install -vv
+        - python setup_gpu.py install -vv --single-version-externally-managed --record record.txt
       missing_dso_whitelist:
         - '*/libcuda.*'
     requirements:
@@ -64,15 +64,15 @@ outputs:
       run:
         - python
         - numpy
-        - qulacs {{ version }} gpu
+        - qulacs-mutex {{ version }} gpu
     test:
-      imports:
-        - qulacs
+      #imports:
+      #  - qulacs
       source_files:
         - python/test/test_qulacs.py
       commands:
         - nvidia-smi
-        - python test_qulacs.py
+        - python python/test/test_qulacs.py
 
 #  requires:
 #    - pytest
