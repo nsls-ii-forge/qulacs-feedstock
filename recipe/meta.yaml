@@ -18,15 +18,15 @@ build:
   skip: true  # [cuda_compiler_version in (undefined, "None")]
   skip: true  # [not linux]
 
-requirements:
-  #build:
-  #  - {{ compiler("c") }}
-  #  - {{ compiler("cxx") }}
-  #  - {{ compiler("cuda") }}
-  host:
-    - python
-    - pip
-    - setuptools
+#requirements:
+#  #build:
+#  #  - {{ compiler("c") }}
+#  #  - {{ compiler("cxx") }}
+#  #  - {{ compiler("cuda") }}
+#  host:
+#    - python
+#    - pip
+#    - setuptools
 
 outputs:
   # this is the metapackage to ensure mutual exclusiveness
@@ -43,7 +43,8 @@ outputs:
         # GCC and GXX are defined by conda-build
         - export C_COMPILER="${GCC}"
         - export CXX_COMPILER="${GXX}"
-        - {{ PYTHON }} setup_gpu.py install -vv
+        - export CUDA_BIN_PATH=/usr/local/cuda/  # bad interaction between cmake and cuda on CF?
+        - python setup_gpu.py install -vv
       missing_dso_whitelist:
         - '*/libcuda.*'
     requirements:
@@ -55,10 +56,10 @@ outputs:
         - make  # [not win]
         - eigen
         - pybind11
+        - setuptools
       host:
         - python
         - pip
-        - setuptools
       run:
         - python
         - numpy
