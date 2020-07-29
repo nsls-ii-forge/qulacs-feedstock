@@ -19,8 +19,9 @@ build:
   skip: true  # [not linux]
 
   script:
-    - export C_COMPILER="${PREFIX}/bin/x86_64-conda-linux-gnu-gcc"
-    - export CXX_COMPILER="${PREFIX}/bin/x86_64-conda-linux-gnu-g++"
+    # GCC and GXX are defined by conda-build
+    - export C_COMPILER="${GCC}"
+    - export CXX_COMPILER="${GXX}"
     - echo $C_COMPILER
     - echo $CXX_COMPILER
     - {{ PYTHON }} setup_gpu.py install -vv  # [cuda_compiler_version not in (undefined, "None")]
