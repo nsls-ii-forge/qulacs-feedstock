@@ -19,8 +19,10 @@ build:
   skip: true  # [not linux]
 
   script:
-    - export C_COMPILER=x86_64-conda-linux-gnu-gcc
-    - export CXX_COMPILER=x86_64-conda-linux-gnu-g++
+    - export C_COMPILER="${PREFIX}/bin/x86_64-conda-linux-gnu-gcc"
+    - export CXX_COMPILER="${PREFIX}/bin/x86_64-conda-linux-gnu-g++"
+    - echo $C_COMPILER
+    - echo $CXX_COMPILER
     - {{ PYTHON }} setup_gpu.py install -vv  # [cuda_compiler_version not in (undefined, "None")]
 
   missing_dso_whitelist:
@@ -32,13 +34,13 @@ requirements:
     - {{ compiler("cxx") }}
     - cmake
     - make  # [not win]
+    - eigen
+    - pybind11
 
   host:
     - python
     - pip
     - setuptools
-    - eigen
-    - pybind11
 
   run:
     - python
