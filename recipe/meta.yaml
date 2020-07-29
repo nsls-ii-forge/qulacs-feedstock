@@ -35,6 +35,9 @@ outputs:
     build:
       number: 0
       string: {{ arch }}
+    test:
+      commands:
+        - echo "qulacs metapackage is built"
 
   - name: {{ name|lower }}-gpu  # [cuda_compiler_version not in (undefined, "None")]
     version: {{ version }}
@@ -54,8 +57,6 @@ outputs:
         - {{ compiler("cuda") }}
         - cmake
         - make  # [not win]
-        - eigen
-        - pybind11
         - setuptools
       host:
         - python
@@ -64,10 +65,14 @@ outputs:
         - python
         - numpy
         - qulacs {{ version }} gpu
-
-test:
-  imports:
-    - qulacs
+    test:
+      imports:
+        - qulacs
+      source_files:
+        - python/test/test_qulacs.py
+      commands:
+        - nvidia-smi
+        - python test_qulacs.py
 
 #  requires:
 #    - pytest
