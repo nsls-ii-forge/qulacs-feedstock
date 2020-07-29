@@ -17,14 +17,14 @@ build:
   skip: true  # [cuda_compiler_version in (undefined, "None")]
   skip: true  # [not linux]
 
-requirements:
-  build:
-    - {{ compiler("c") }}
-    - {{ compiler("cxx") }}
-  host:
-    - python
-    - pip
-    - setuptools
+#requirements:
+#  build:
+#    - {{ compiler("c") }}
+#    - {{ compiler("cxx") }}
+#  host:
+#    - python
+#    - pip
+#    - setuptools
 
 outputs:
   # the name "qulacs-conda" is reserved as a metapackage to ensure mutual exclusiveness
@@ -39,25 +39,13 @@ outputs:
 
   - name: {{ name|lower }}-gpu  # [cuda_compiler_version not in (undefined, "None")]
     version: {{ version }}
-    #files:
-    #  - lib/python{{ python }}/site-packages/Qulacs_GPU*
     build:
-      #preserve_egg_dir: True
       script:
         # GCC and GXX are defined by conda-build
         - export C_COMPILER="${GCC}"
         - export CXX_COMPILER="${GXX}"
         - export CUDA_BIN_PATH=/usr/local/cuda/  # bad interaction between cmake and cuda on CF?
-        #- mv setup_gpu.py setup.py
-        #- python -m pip install . --no-deps -vv
-        #- python setup_gpu.py install -vv --single-version-externally-managed --record=record.txt
-        - {{ PYTHON }} setup_gpu.py install -vv
-        #- python setup_gpu.py install -vv --single-version-externally-managed --record=record.txt bdist_egg
-        #- python setup_gpu.py install bdist_egg -vv
-        #- python -c "import qulacs"
-      #script: build_do_not_use.sh
-      #always_include_files:
-      #  - lib/python{{ python }}/site-packages/Qulacs_GPU-{{ version }}-py{{ python }}-linux-x86_64.egg/*
+        - $PREFIX/bin/python setup_gpu.py install -vv  # "PYTHON" is undefined at this point
       missing_dso_whitelist:
         - '*/libcuda.*'
     requirements:
@@ -66,7 +54,6 @@ outputs:
         - {{ compiler("cxx") }}
         - {{ compiler("cuda") }}
         - cmake
-        - make
       host:
         - python
         - pip
@@ -85,21 +72,6 @@ outputs:
       commands:
         - nvidia-smi
         - python python/test/test_qulacs.py
-
-#  requires:
-#    - pytest
-#    - mock
-#    - {{ compiler("c") }}
-#    - {{ compiler("cxx") }}
-#    - {{ compiler("cuda") }}  # tests need nvcc
-#    #- scipy >=1.0,<1.1  <-- cause error
-#
-#  source_files:
-#    - tests
-#
-#  #commands:
-#  #  # ugly hack to see the linkage
-#  #  - ldd ${STDLIB_DIR}/site-packages/cupy/cuda/cutensor.cpython-${CONDA_PY}m-x86_64-linux-gnu.so  # [cuda_compiler_version in ('10.1', '10.2')]
 
 about:
   home: https://github.com/qulacs/qulacs
