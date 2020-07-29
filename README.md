@@ -1,5 +1,5 @@
-About qulacs
-============
+About qulacs-conda
+==================
 
 Home: https://github.com/qulacs/qulacs
 
@@ -48,43 +48,44 @@ Current release info
 
 | Name | Downloads | Version | Platforms |
 | --- | --- | --- | --- |
+| [![Conda Recipe](https://img.shields.io/badge/recipe-qulacs-green.svg)](https://anaconda.org/nsls2forge/qulacs) | [![Conda Downloads](https://img.shields.io/conda/dn/nsls2forge/qulacs.svg)](https://anaconda.org/nsls2forge/qulacs) | [![Conda Version](https://img.shields.io/conda/vn/nsls2forge/qulacs.svg)](https://anaconda.org/nsls2forge/qulacs) | [![Conda Platforms](https://img.shields.io/conda/pn/nsls2forge/qulacs.svg)](https://anaconda.org/nsls2forge/qulacs) |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-qulacs--gpu-green.svg)](https://anaconda.org/nsls2forge/qulacs-gpu) | [![Conda Downloads](https://img.shields.io/conda/dn/nsls2forge/qulacs-gpu.svg)](https://anaconda.org/nsls2forge/qulacs-gpu) | [![Conda Version](https://img.shields.io/conda/vn/nsls2forge/qulacs-gpu.svg)](https://anaconda.org/nsls2forge/qulacs-gpu) | [![Conda Platforms](https://img.shields.io/conda/pn/nsls2forge/qulacs-gpu.svg)](https://anaconda.org/nsls2forge/qulacs-gpu) |
 
-Installing qulacs
-=================
+Installing qulacs-conda
+=======================
 
-Installing `qulacs` from the `nsls2forge` channel can be achieved by adding `nsls2forge` to your channels with:
+Installing `qulacs-conda` from the `nsls2forge` channel can be achieved by adding `nsls2forge` to your channels with:
 
 ```
 conda config --add channels nsls2forge
 ```
 
-Once the `nsls2forge` channel has been enabled, `qulacs-gpu` can be installed with:
+Once the `nsls2forge` channel has been enabled, `qulacs, qulacs-gpu` can be installed with:
 
 ```
-conda install qulacs-gpu
+conda install qulacs qulacs-gpu
 ```
 
-It is possible to list all of the versions of `qulacs-gpu` available on your platform with:
+It is possible to list all of the versions of `qulacs` available on your platform with:
 
 ```
-conda search qulacs-gpu --channel nsls2forge
+conda search qulacs --channel nsls2forge
 ```
 
 
 
 
-Updating qulacs-feedstock
-=========================
+Updating qulacs-conda-feedstock
+===============================
 
-If you would like to improve the qulacs recipe or build a new
+If you would like to improve the qulacs-conda recipe or build a new
 package version, please fork this repository and submit a PR. Upon submission,
 your changes will be run on the appropriate platforms to give the reviewer an
 opportunity to confirm that the changes result in a successful build. Once
 merged, the recipe will be re-built and uploaded automatically to the
 `nsls2forge` channel, whereupon the built conda packages will be available for
 everybody to install and use from the `nsls2forge` channel.
-Note that all branches in the nsls-ii-forge/qulacs-feedstock are
+Note that all branches in the nsls-ii-forge/qulacs-conda-feedstock are
 immediately built and any created packages are uploaded, so PRs should be based
 on branches in forks and branches in the main repository should only be used to
 build distinct package versions.
