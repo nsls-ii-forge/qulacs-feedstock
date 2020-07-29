@@ -1,0 +1,75 @@
+{% set name = "qulacs" %}
+{% set version = "0.1.10.1" %}
+{% set sha256 = "7c3909ae63d352ed4b1481d63093cb5971c120c7577353e591a323b7a3d41ada" %}
+
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  - url: https://github.com/qulacs/qulacs/archive/v{{ version }}.tar.gz
+    sha256: {{ sha256 }}
+
+build:
+  number: 0
+  # temporarily disable PyPy build (conda-forge/cupy-feedstock#43)
+  skip: true  # [python_impl == "pypy"]
+  skip: true  # [cuda_compiler_version in (undefined, "None")]
+
+  script:
+    - {{ PYTHON }} setup_gpu.py install -vv --single-version-externally-managed --no-deps  # [cuda_compiler_version not in (undefined, "None")]
+
+  missing_dso_whitelist:
+    - '*/libcuda.*'
+
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - {{ compiler("cxx") }}
+
+  host:
+    - python
+    - pip
+    - setuptools
+    - cmake
+    - eigen
+    - pybind11
+
+  run:
+    - python
+    - numpy
+
+
+outputs:
+  - name: qulacs-gpu
+    version: {{ version }}
+    build:
+      - {{ compiler("cuda") }}
+
+#test:
+#  requires:
+#    - pytest
+#    - mock
+#    - {{ compiler("c") }}
+#    - {{ compiler("cxx") }}
+#    - {{ compiler("cuda") }}  # tests need nvcc
+#    #- scipy >=1.0,<1.1  <-- cause error
+#
+#  source_files:
+#    - tests
+#
+#  #commands:
+#  #  # ugly hack to see the linkage
+#  #  - ldd ${STDLIB_DIR}/site-packages/cupy/cuda/cutensor.cpython-${CONDA_PY}m-x86_64-linux-gnu.so  # [cuda_compiler_version in ('10.1', '10.2')]
+
+about:
+  home: https://github.com/qulacs/qulacs
+  license: MIT
+  license_family: MIT
+  license_file: LICENSE
+  summary: Qulacs is a Variational Quantum Circuit Simulator for Quantum Computation Research.
+
+extra:
+  recipe-maintainers:
+    - leofang
