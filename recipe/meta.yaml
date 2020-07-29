@@ -54,7 +54,10 @@ outputs:
         - numpy
         - qulacs {{ version }} gpu
 
-#test:
+test:
+  imports:
+    - qulacs
+
 #  requires:
 #    - pytest
 #    - mock
