@@ -2,9 +2,9 @@
 {% set version = "0.1.10.1" %}
 {% set sha256 = "7c3909ae63d352ed4b1481d63093cb5971c120c7577353e591a323b7a3d41ada" %}
 
-
 package:
-  name: {{ name|lower }}
+  # must not match any outputs for requirements to be handled correctly
+  name: qulacs-conda
   version: {{ version }}
 
 source:
@@ -18,42 +18,41 @@ build:
   skip: true  # [cuda_compiler_version in (undefined, "None")]
   skip: true  # [not linux]
 
-  script:
-    # GCC and GXX are defined by conda-build
-    - export C_COMPILER="${GCC}"
-    - export CXX_COMPILER="${GXX}"
-    - echo $C_COMPILER
-    - echo $CXX_COMPILER
-    - {{ PYTHON }} setup_gpu.py install -vv  # [cuda_compiler_version not in (undefined, "None")]
-
-  missing_dso_whitelist:
-    - '*/libcuda.*'
-
-requirements:
-  build:
-    - {{ compiler("c") }}
-    - {{ compiler("cxx") }}
-    - cmake
-    - make  # [not win]
-    - eigen
-    - pybind11
-
-  host:
-    - python
-    - pip
-    - setuptools
-
-  run:
-    - python
-    - numpy
-
-
 outputs:
+  # this is the metapackage to ensure mutual exclusiveness
+  - name: {{ name|lower }}
+    version: {{ version }}
+    build:
+      number: 0
+      string: {{ arch }}
+
   - name: {{ name|lower }}-gpu
     version: {{ version }}
+    build:
+      script:
+        # GCC and GXX are defined by conda-build
+        - export C_COMPILER="${GCC}"
+        - export CXX_COMPILER="${GXX}"
+        - {{ PYTHON }} setup_gpu.py install -vv
+      missing_dso_whitelist:
+        - '*/libcuda.*'
     requirements:
       build:
+        - {{ compiler("c") }}
+        - {{ compiler("cxx") }}
         - {{ compiler("cuda") }}
+        - cmake
+        - make  # [not win]
+        - eigen
+        - pybind11
+      host:
+        - python
+        - pip
+        - setuptools
+      run:
+        - python
+        - numpy
+        - qulacs {{ version }} gpu
 
 #test:
 #  requires:

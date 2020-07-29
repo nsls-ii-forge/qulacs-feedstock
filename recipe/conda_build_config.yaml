@@ -34,3 +34,8 @@ python:
 #  - 7.6.5
 #nccl:
 #  - 2.4.6.1
+
+# to ensure mutual exclusiveness
+arch:
+  - gpu
+  - cpu
