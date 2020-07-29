@@ -18,6 +18,12 @@ build:
   skip: true  # [cuda_compiler_version in (undefined, "None")]
   skip: true  # [not linux]
 
+requirements:
+  host:
+    - python
+    - pip
+    - setuptools
+
 outputs:
   # this is the metapackage to ensure mutual exclusiveness
   - name: {{ name|lower }}
