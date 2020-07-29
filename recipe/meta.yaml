@@ -16,6 +16,7 @@ build:
   # temporarily disable PyPy build (conda-forge/cupy-feedstock#43)
   skip: true  # [python_impl == "pypy"]
   skip: true  # [cuda_compiler_version in (undefined, "None")]
+  skip: true  # [not linux]
 
   script:
     - {{ PYTHON }} setup_gpu.py install -vv --single-version-externally-managed --no-deps  # [cuda_compiler_version not in (undefined, "None")]
@@ -42,10 +43,11 @@ requirements:
 
 
 outputs:
-  - name: qulacs-gpu
+  - name: {{ name|lower }}-gpu
     version: {{ version }}
-    build:
-      - {{ compiler("cuda") }}
+    requirements:
+      build:
+        - {{ compiler("cuda") }}
 
 #test:
 #  requires:
