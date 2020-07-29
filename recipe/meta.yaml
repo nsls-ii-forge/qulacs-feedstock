@@ -19,7 +19,7 @@ build:
   skip: true  # [not linux]
 
   script:
-    - {{ PYTHON }} setup_gpu.py install -vv --single-version-externally-managed --no-deps  # [cuda_compiler_version not in (undefined, "None")]
+    - {{ PYTHON }} setup_gpu.py install -vv --single-version-externally-managed  # [cuda_compiler_version not in (undefined, "None")]
 
   missing_dso_whitelist:
     - '*/libcuda.*'
