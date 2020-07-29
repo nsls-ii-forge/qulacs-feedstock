@@ -30,12 +30,13 @@ requirements:
   build:
     - {{ compiler("c") }}
     - {{ compiler("cxx") }}
+    - cmake
+    - make  # [not win]
 
   host:
     - python
     - pip
     - setuptools
-    - cmake
     - eigen
     - pybind11
 
