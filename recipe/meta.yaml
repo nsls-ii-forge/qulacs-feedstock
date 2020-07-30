@@ -3,11 +3,8 @@
 {% set sha256 = "7c3909ae63d352ed4b1481d63093cb5971c120c7577353e591a323b7a3d41ada" %}
 {% set build = 0 %}
 
-{% if cuda_compiler_version != "None" %}
-{% set arch = "gpu" %}
-{% else %}
-{% set arch = "cpu" %}
-{% endif %}
+{% set arch = "gpu" %}  # [cuda_compiler_version != "None"]
+{% set arch = "cpu" %}  # [cuda_compiler_version == "None"]
 
 package:
   name: {{ name|lower }}-conda
@@ -34,7 +31,8 @@ outputs:
       commands:
         - echo "qulacs-mutex metapackage is built"
 
-  - name: {{ name|lower }}-gpu  # [arch == "gpu"]
+  {% if arch == "gpu" %}
+  - name: {{ name|lower }}-gpu
     version: {{ version }}
     build:
       number: {{ build }}
@@ -71,7 +69,9 @@ outputs:
         - nvidia-smi
         - python python/test/test_qulacs.py
 
-  - name: {{ name|lower }}  # [arch == "cpu"]
+  {% else %}
+
+  - name: {{ name|lower }}
     version: {{ version }}
     build:
       number: {{ build }}
@@ -96,6 +96,8 @@ outputs:
     test:
       imports:
         - qulacs
+
+  {% endif %}
 
 about:
   home: https://github.com/qulacs/qulacs
