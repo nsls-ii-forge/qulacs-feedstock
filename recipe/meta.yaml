@@ -1,10 +1,13 @@
 {% set name = "qulacs" %}
 {% set version = "0.1.10.1" %}
 {% set sha256 = "7c3909ae63d352ed4b1481d63093cb5971c120c7577353e591a323b7a3d41ada" %}
+{% set build = 0 %}
 
+{% set arch = "gpu" %}  # [cuda_compiler_version != "None"]
+{% set arch = "cpu" %}  # [cuda_compiler_version == "None"]
 
 package:
-  name: {{ name|lower }}
+  name: {{ name|lower }}-conda
   version: {{ version }}
 
 source:
@@ -12,58 +15,89 @@ source:
     sha256: {{ sha256 }}
 
 build:
-  number: 0
-  # temporarily disable PyPy build (conda-forge/cupy-feedstock#43)
-  skip: true  # [python_impl == "pypy"]
-  skip: true  # [cuda_compiler_version in (undefined, "None")]
-  skip: true  # [not linux]
-
-  script:
-    - {{ PYTHON }} setup_gpu.py install -vv --single-version-externally-managed --no-deps  # [cuda_compiler_version not in (undefined, "None")]
-
-  missing_dso_whitelist:
-    - '*/libcuda.*'
-
-requirements:
-  build:
-    - {{ compiler("c") }}
-    - {{ compiler("cxx") }}
-
-  host:
-    - python
-    - pip
-    - setuptools
-    - cmake
-    - eigen
-    - pybind11
-
-  run:
-    - python
-    - numpy
-
+  skip: true  # [python_impl == "pypy" or not linux]
 
 outputs:
+  # this is a metapackage to ensure mutual exclusiveness
+  - name: qulacs-mutex
+    version: {{ version }}
+    build:
+      number: 0
+      string: {{ arch }}
+      run_exports:
+        - {{ pin_subpackage('qulacs-mutex', exact=True) }}
+    requirements: {}
+    test:
+      commands:
+        - echo "qulacs-mutex metapackage is built"
+
+  {% if arch == "gpu" %}
   - name: {{ name|lower }}-gpu
     version: {{ version }}
+    build:
+      number: {{ build }}
+      script:
+        # GCC and GXX are defined by conda-build
+        - export C_COMPILER="${GCC}"
+        - export CXX_COMPILER="${GXX}"
+        - export CUDA_BIN_PATH=/usr/local/cuda/  # bad interaction between cmake and cuda on CF?
+        - $PREFIX/bin/python setup_gpu.py install -vv  # "PYTHON" is undefined at this point
+      missing_dso_whitelist:
+        - '*/libcuda.*'
     requirements:
       build:
+        - {{ compiler("c") }}
+        - {{ compiler("cxx") }}
         - {{ compiler("cuda") }}
+        - cmake
+      host:
+        - python
+        - pip
+        - setuptools
+      run:
+        - python
+        - numpy
+        - qulacs-mutex {{ version }} {{ arch }}
+    test:
+      imports:
+        - qulacs
+      requires:
+        - scipy
+      source_files:
+        - python/test/test_qulacs.py
+      commands:
+        - nvidia-smi
+        - python python/test/test_qulacs.py
 
-#test:
-#  requires:
-#    - pytest
-#    - mock
-#    - {{ compiler("c") }}
-#    - {{ compiler("cxx") }}
-#    - {{ compiler("cuda") }}  # tests need nvcc
-#    #- scipy >=1.0,<1.1  <-- cause error
-#
-#  source_files:
-#    - tests
-#
-#  #commands:
-#  #  # ugly hack to see the linkage
-#  #  - ldd ${STDLIB_DIR}/site-packages/cupy/cuda/cutensor.cpython-${CONDA_PY}m-x86_64-linux-gnu.so  # [cuda_compiler_version in ('10.1', '10.2')]
+  {% else %}
+
+  - name: {{ name|lower }}
+    version: {{ version }}
+    build:
+      number: {{ build }}
+      script:
+        # GCC and GXX are defined by conda-build
+        - export C_COMPILER="${GCC}"
+        - export CXX_COMPILER="${GXX}"
+        - $PREFIX/bin/python setup.py install -vv  # "PYTHON" is undefined at this point
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - {{ compiler("cxx") }}
+        - cmake
+      host:
+        - python
+        - pip
+        - setuptools
+      run:
+        - python
+        - numpy
+        - qulacs-mutex {{ version }} {{ arch }}
+    test:
+      imports:
+        - qulacs
+
+  {% endif %}
 
 about:
   home: https://github.com/qulacs/qulacs
