@@ -5,10 +5,8 @@
 
 {% if cuda_compiler_version not in (undefined, "None") %}
 {% set arch = "gpu" %}
-{% set build_string = arch + cuda_compiler_version %}
 {% else %}
 {% set arch = "cpu" %}
-{% set build_string = arch %}
 {% endif %}
 
 package:
@@ -28,7 +26,7 @@ outputs:
     version: {{ version }}
     build:
       number: 0
-      string: {{ build_string }}
+      string: {{ arch }}
       run_exports:
         - {{ pin_subpackage('qulacs-mutex', exact=True) }}
     requirements: {}
@@ -61,7 +59,7 @@ outputs:
       run:
         - python
         - numpy
-        - qulacs-mutex {{ version }} {{ build_string }}
+        - qulacs-mutex {{ version }} {{ arch }}
     test:
       imports:
         - qulacs
@@ -94,7 +92,7 @@ outputs:
       run:
         - python
         - numpy
-        - qulacs-mutex {{ version }} {{ build_string }}
+        - qulacs-mutex {{ version }} {{ arch }}
     test:
       imports:
         - qulacs
