@@ -14,9 +14,7 @@ source:
   - url: https://github.com/qulacs/qulacs/archive/v{{ version }}.tar.gz
     sha256: {{ sha256 }}
     patches:
-      {% if arch == "cpu" %}
       - setup.patch
-      {% endif %}
 
 build:
   skip: true  # [python_impl == "pypy" or not linux]
@@ -54,21 +52,22 @@ outputs:
         - {{ compiler("cxx") }}
         - {{ compiler("cuda") }}
         - pybind11
+        - eigen 3.3.5
         - cmake
       host:
         - python
-        - pip
         - setuptools
       run:
         - python
         - numpy
-        - qulacs-mutex {{ version }} {{ arch }}
+        - qulacs-mutex 1.0 {{ arch }}
     test:
       imports:
         - qulacs
       commands:
         - nvidia-smi
-        # TODO: add gpu test
+        - python -c "import qulacs; a = qulacs.QuantumStateGpu(2); if a.get_device_name() != 'gpu': raise Exception"
+        - exit $?
 
   {% else %}
 
