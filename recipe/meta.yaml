@@ -34,6 +34,7 @@ outputs:
         - echo "qulacs-mutex metapackage is built"
 
   {% if arch == "gpu" %}
+
   - name: {{ name|lower }}-gpu
     version: {{ version }}
     build:
