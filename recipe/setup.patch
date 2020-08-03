@@ -1,0 +1,45 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 16fadaa..dc1ee23 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -110,17 +110,7 @@ if(USE_PYTHON)
+ 		)
+ 		include_directories(SYSTEM ${PYBIND11_INCLUDE_DIR})
+ 	else()
+-		FetchContent_Declare(
+-			pybind11_fetch
+-			GIT_REPOSITORY https://github.com/pybind/pybind11
+-			GIT_TAG v2.2.4
+-		)
+-		FetchContent_GetProperties(pybind11_fetch)
+-		if(NOT pybind11_fetch_POPULATED)
+-			message(STATUS "Fetch pybind11 for python-binding")
+-			FetchContent_Populate(pybind11_fetch)
+-			add_subdirectory(${pybind11_fetch_SOURCE_DIR})
+-		endif()
++        find_package(pybind11 REQUIRED)  # use conda's version
+ 	endif()
+ else()
+ 	message(STATUS "Skip downloding pybind11")
+diff --git a/setup.py b/setup.py
+index 8664c37..75212f4 100644
+--- a/setup.py
++++ b/setup.py
+@@ -104,6 +104,17 @@ class CMakeBuild(build_ext):
+                                                               self.distribution.get_version())
+         if not os.path.exists(self.build_temp):
+             os.makedirs(self.build_temp)
++
++        # hack for conda-build: retrieve all env vars starting with CONDA_QULACS_,
++        # and set them to be cmake variables
++        extra_args = []
++        for key, value in os.environ.items():
++            if key.startswith('CONDA_QULACS_'):
++                var = key[13:]
++                extra_args.append('-D' + var + '=' + value)
++        print("extra_args:", extra_args)
++        cmake_args += extra_args
++
+         subprocess.check_call(['cmake', ext.sourcedir] + cmake_args, cwd=self.build_temp, env=env)
+         subprocess.check_call(['cmake', '--build', '.', '--target', 'python'] + build_args, cwd=self.build_temp)
+ 

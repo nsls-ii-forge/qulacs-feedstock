@@ -1,7 +1,7 @@
 {% set name = "qulacs" %}
 {% set version = "0.1.10.1" %}
 {% set sha256 = "7c3909ae63d352ed4b1481d63093cb5971c120c7577353e591a323b7a3d41ada" %}
-{% set build = 0 %}
+{% set build = 1 %}
 
 {% set arch = "gpu" %}  # [cuda_compiler_version != "None"]
 {% set arch = "cpu" %}  # [cuda_compiler_version == "None"]
@@ -13,6 +13,10 @@ package:
 source:
   - url: https://github.com/qulacs/qulacs/archive/v{{ version }}.tar.gz
     sha256: {{ sha256 }}
+    patches:
+      {% if arch == "cpu" %}
+      - setup.patch
+      {% endif %}
 
 build:
   skip: true  # [python_impl == "pypy" or not linux]
@@ -20,9 +24,9 @@ build:
 outputs:
   # this is a metapackage to ensure mutual exclusiveness
   - name: qulacs-mutex
-    version: {{ version }}
+    version: 1.0  # we only bump this when the infrastructure is changed.
     build:
-      number: 0
+      number: 0   # don't touch this
       string: {{ arch }}
       run_exports:
         - {{ pin_subpackage('qulacs-mutex', exact=True) }}
@@ -49,6 +53,7 @@ outputs:
         - {{ compiler("c") }}
         - {{ compiler("cxx") }}
         - {{ compiler("cuda") }}
+        - pybind11
         - cmake
       host:
         - python
@@ -61,13 +66,9 @@ outputs:
     test:
       imports:
         - qulacs
-      requires:
-        - scipy
-      source_files:
-        - python/test/test_qulacs.py
       commands:
         - nvidia-smi
-        - python python/test/test_qulacs.py
+        # TODO: add gpu test
 
   {% else %}
 
@@ -79,23 +80,40 @@ outputs:
         # GCC and GXX are defined by conda-build
         - export C_COMPILER="${GCC}"
         - export CXX_COMPILER="${GXX}"
+        #- export _conda_build_env="$(dirname $GCC)/.."  # get build env path
+        #- export CONDA_QULACS_FETCHCONTENT_SOURCE_DIR_PYBIND11_FETCH=$_conda_build_env/include/pybind11
+        #- echo "check pybind11"
+        #- ls $_conda_build_env/include/pybind11
+        #- export CONDA_QULACS_FETCHCONTENT_SOURCE_DIR_PYBIND11_FETCH=$_conda_build_env/share/cmake/pybind11
+        #- ls $CONDA_QULACS_FETCHCONTENT_SOURCE_DIR_PYBIND11_FETCH
         - $PREFIX/bin/python setup.py install -vv  # "PYTHON" is undefined at this point
+        #- export CONDA_QULACS_pybind11_DIR=$_conda_build_env/share/cmake/pybind11
+        #- python setup.py install -vv
     requirements:
       build:
         - {{ compiler("c") }}
         - {{ compiler("cxx") }}
+        #- python
+        #- pip
+        #- setuptools
+        - pybind11
         - cmake
       host:
         - python
-        - pip
         - setuptools
       run:
         - python
         - numpy
-        - qulacs-mutex {{ version }} {{ arch }}
+        - qulacs-mutex 1.0 {{ arch }}
     test:
       imports:
         - qulacs
+      requires:
+        - scipy
+      source_files:
+        - python/test/test_qulacs.py
+      commands:
+        - python python/test/test_qulacs.py
 
   {% endif %}
 

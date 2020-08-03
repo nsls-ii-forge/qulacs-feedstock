@@ -29,38 +29,10 @@ Current build status
         <table>
           <thead><tr><th>Variant</th><th>Status</th></tr></thead>
           <tbody><tr>
-              <td>linux_64_cuda_compiler_version10.0</td>
+              <td>linux_64</td>
               <td>
                 <a href="https://dev.azure.com/nsls2forge/nsls2forge/_build/latest?definitionId=235&branchName=master">
-                  <img src="https://dev.azure.com/nsls2forge/nsls2forge/_apis/build/status/qulacs-feedstock?branchName=master&jobName=linux&configuration=linux_64_cuda_compiler_version10.0" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_64_cuda_compiler_version10.1</td>
-              <td>
-                <a href="https://dev.azure.com/nsls2forge/nsls2forge/_build/latest?definitionId=235&branchName=master">
-                  <img src="https://dev.azure.com/nsls2forge/nsls2forge/_apis/build/status/qulacs-feedstock?branchName=master&jobName=linux&configuration=linux_64_cuda_compiler_version10.1" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_64_cuda_compiler_version10.2</td>
-              <td>
-                <a href="https://dev.azure.com/nsls2forge/nsls2forge/_build/latest?definitionId=235&branchName=master">
-                  <img src="https://dev.azure.com/nsls2forge/nsls2forge/_apis/build/status/qulacs-feedstock?branchName=master&jobName=linux&configuration=linux_64_cuda_compiler_version10.2" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_64_cuda_compiler_version9.2</td>
-              <td>
-                <a href="https://dev.azure.com/nsls2forge/nsls2forge/_build/latest?definitionId=235&branchName=master">
-                  <img src="https://dev.azure.com/nsls2forge/nsls2forge/_apis/build/status/qulacs-feedstock?branchName=master&jobName=linux&configuration=linux_64_cuda_compiler_version9.2" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_64_cuda_compiler_versionNone</td>
-              <td>
-                <a href="https://dev.azure.com/nsls2forge/nsls2forge/_build/latest?definitionId=235&branchName=master">
-                  <img src="https://dev.azure.com/nsls2forge/nsls2forge/_apis/build/status/qulacs-feedstock?branchName=master&jobName=linux&configuration=linux_64_cuda_compiler_versionNone" alt="variant">
+                  <img src="https://dev.azure.com/nsls2forge/nsls2forge/_apis/build/status/qulacs-feedstock?branchName=master&jobName=linux&configuration=linux_64_" alt="variant">
                 </a>
               </td>
             </tr>
@@ -77,7 +49,6 @@ Current release info
 | Name | Downloads | Version | Platforms |
 | --- | --- | --- | --- |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-qulacs-green.svg)](https://anaconda.org/nsls2forge/qulacs) | [![Conda Downloads](https://img.shields.io/conda/dn/nsls2forge/qulacs.svg)](https://anaconda.org/nsls2forge/qulacs) | [![Conda Version](https://img.shields.io/conda/vn/nsls2forge/qulacs.svg)](https://anaconda.org/nsls2forge/qulacs) | [![Conda Platforms](https://img.shields.io/conda/pn/nsls2forge/qulacs.svg)](https://anaconda.org/nsls2forge/qulacs) |
-| [![Conda Recipe](https://img.shields.io/badge/recipe-qulacs--gpu-green.svg)](https://anaconda.org/nsls2forge/qulacs-gpu) | [![Conda Downloads](https://img.shields.io/conda/dn/nsls2forge/qulacs-gpu.svg)](https://anaconda.org/nsls2forge/qulacs-gpu) | [![Conda Version](https://img.shields.io/conda/vn/nsls2forge/qulacs-gpu.svg)](https://anaconda.org/nsls2forge/qulacs-gpu) | [![Conda Platforms](https://img.shields.io/conda/pn/nsls2forge/qulacs-gpu.svg)](https://anaconda.org/nsls2forge/qulacs-gpu) |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-qulacs--mutex-green.svg)](https://anaconda.org/nsls2forge/qulacs-mutex) | [![Conda Downloads](https://img.shields.io/conda/dn/nsls2forge/qulacs-mutex.svg)](https://anaconda.org/nsls2forge/qulacs-mutex) | [![Conda Version](https://img.shields.io/conda/vn/nsls2forge/qulacs-mutex.svg)](https://anaconda.org/nsls2forge/qulacs-mutex) | [![Conda Platforms](https://img.shields.io/conda/pn/nsls2forge/qulacs-mutex.svg)](https://anaconda.org/nsls2forge/qulacs-mutex) |
 
 Installing qulacs-conda
@@ -89,10 +60,10 @@ Installing `qulacs-conda` from the `nsls2forge` channel can be achieved by addin
 conda config --add channels nsls2forge
 ```
 
-Once the `nsls2forge` channel has been enabled, `qulacs, qulacs-gpu, qulacs-mutex` can be installed with:
+Once the `nsls2forge` channel has been enabled, `qulacs, qulacs-mutex` can be installed with:
 
 ```
-conda install qulacs qulacs-gpu qulacs-mutex
+conda install qulacs qulacs-mutex
 ```
 
 It is possible to list all of the versions of `qulacs` available on your platform with:
