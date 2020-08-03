@@ -64,6 +64,8 @@ outputs:
     test:
       imports:
         - qulacs
+      source_files:
+        - $RECIPE_DIR/test_gpu.py
       commands:
         - nvidia-smi
         - python test_gpu.py
