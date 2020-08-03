@@ -54,7 +54,7 @@ jobs:
         export GIT_BRANCH=$BUILD_SOURCEBRANCHNAME
         export FEEDSTOCK_NAME=$(basename ${BUILD_REPOSITORY_NAME})
         export UPLOAD_ON_BRANCH="master"
-        export CONDA_FORGE_DOCKER_RUN_ARGS="-t --rm"
+        export CONDA_FORGE_DOCKER_RUN_ARGS="-t --rm --gpus all"
         .scripts/run_docker_build.sh
     displayName: Run docker build
     env:
