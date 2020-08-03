@@ -1,0 +1,47 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 16fadaa..c0c5819 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -59,21 +59,8 @@ include(ExternalProject)
+ include(${CMAKE_SOURCE_DIR}/FetchContent.cmake)
+ 
+ # Eigen
+-set(EIGEN_BUILD_DIR   ${CMAKE_BINARY_DIR}/eigen)
+-set(EIGEN_INSTALL_DIR ${CMAKE_SOURCE_DIR}/include)
+-set(EIGEN_INCLUDE_DIR ${EIGEN_INSTALL_DIR})
+-ExternalProject_Add(
+-    eigen
+-    URL https://gitlab.com/libeigen/eigen/-/archive/3.3.5/eigen-3.3.5.tar.gz
+-    PREFIX ${EIGEN_BUILD_DIR}
+-    CONFIGURE_COMMAND ""
+-    BUILD_COMMAND ""
+-    INSTALL_COMMAND
+-      ${CMAKE_COMMAND} -E copy_directory ${EIGEN_BUILD_DIR}/src/eigen/Eigen ${EIGEN_INCLUDE_DIR}/Eigen 
+-      && ${CMAKE_COMMAND} -E copy_directory ${EIGEN_BUILD_DIR}/src/eigen/unsupported ${EIGEN_INCLUDE_DIR}/unsupported
+-    TEST_COMMAND ""
+-)
+-include_directories(SYSTEM ${EIGEN_INCLUDE_DIR})
++find_package(eigen REQUIRED NAMES Eigen3)  # use conda's version
++include_directories(${EIGEN3_INCLUDE_DIRS})
+ 
+ # Google test
+ if(USE_TEST)
+@@ -110,17 +97,7 @@ if(USE_PYTHON)
+ 		)
+ 		include_directories(SYSTEM ${PYBIND11_INCLUDE_DIR})
+ 	else()
+-		FetchContent_Declare(
+-			pybind11_fetch
+-			GIT_REPOSITORY https://github.com/pybind/pybind11
+-			GIT_TAG v2.2.4
+-		)
+-		FetchContent_GetProperties(pybind11_fetch)
+-		if(NOT pybind11_fetch_POPULATED)
+-			message(STATUS "Fetch pybind11 for python-binding")
+-			FetchContent_Populate(pybind11_fetch)
+-			add_subdirectory(${pybind11_fetch_SOURCE_DIR})
+-		endif()
++        find_package(pybind11 REQUIRED)  # use conda's version
+ 	endif()
+ else()
+ 	message(STATUS "Skip downloding pybind11")

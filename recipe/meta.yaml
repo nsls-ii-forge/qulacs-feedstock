@@ -1,10 +1,11 @@
 {% set name = "qulacs" %}
 {% set version = "0.1.10.1" %}
 {% set sha256 = "7c3909ae63d352ed4b1481d63093cb5971c120c7577353e591a323b7a3d41ada" %}
-{% set build = 1 %}
+{% set build = 2 %}
 
 {% set arch = "gpu" %}  # [cuda_compiler_version != "None"]
 {% set arch = "cpu" %}  # [cuda_compiler_version == "None"]
+
 
 package:
   name: {{ name|lower }}-conda
@@ -15,6 +16,7 @@ source:
     sha256: {{ sha256 }}
     patches:
       - setup.patch
+      - CMakeList.patch
 
 build:
   skip: true  # [python_impl == "pypy" or not linux]
@@ -73,14 +75,28 @@ outputs:
 
   {% else %}
 
+  # this forces "use_simd" to be exposed to the recipe...
+  {% set simd = True %}     # [use_simd]
+  {% set simd = False %}    # [not use_simd]
+
   - name: {{ name|lower }}
     version: {{ version }}
     build:
+      {% if simd %}
+      {% set build = build + 100 %}
+      {% set label = '' %}
+      {% else %}
+      {% set label = '_no_simd' %}
+      {% endif %}
       number: {{ build }}
+      string: py{{ py }}h{{ PKG_HASH }}_{{ build }}{{ label }}
       script:
         # GCC and GXX are defined by conda-build
         - export C_COMPILER="${GCC}"
         - export CXX_COMPILER="${GXX}"
+        {% if not simd %}
+        - export CONDA_QULACS_USE_SIMD=0
+        {% endif %}
         - $PREFIX/bin/python setup.py install -vv  # "PYTHON" is undefined at this point
     requirements:
       build:
