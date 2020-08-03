@@ -10,7 +10,7 @@ channel_priority: flexible
 azure:
   user_or_org: nsls2forge
   project_name: nsls2forge
-settings_linux:
+  settings_linux:
     pool: #BNL-machines
       name: BNL-machines
       demands:
