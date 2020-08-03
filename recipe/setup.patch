@@ -1,8 +1,32 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 16fadaa..dc1ee23 100644
+index 16fadaa..c0c5819 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -110,17 +110,7 @@ if(USE_PYTHON)
+@@ -59,21 +59,8 @@ include(ExternalProject)
+ include(${CMAKE_SOURCE_DIR}/FetchContent.cmake)
+ 
+ # Eigen
+-set(EIGEN_BUILD_DIR   ${CMAKE_BINARY_DIR}/eigen)
+-set(EIGEN_INSTALL_DIR ${CMAKE_SOURCE_DIR}/include)
+-set(EIGEN_INCLUDE_DIR ${EIGEN_INSTALL_DIR})
+-ExternalProject_Add(
+-    eigen
+-    URL https://gitlab.com/libeigen/eigen/-/archive/3.3.5/eigen-3.3.5.tar.gz
+-    PREFIX ${EIGEN_BUILD_DIR}
+-    CONFIGURE_COMMAND ""
+-    BUILD_COMMAND ""
+-    INSTALL_COMMAND
+-      ${CMAKE_COMMAND} -E copy_directory ${EIGEN_BUILD_DIR}/src/eigen/Eigen ${EIGEN_INCLUDE_DIR}/Eigen 
+-      && ${CMAKE_COMMAND} -E copy_directory ${EIGEN_BUILD_DIR}/src/eigen/unsupported ${EIGEN_INCLUDE_DIR}/unsupported
+-    TEST_COMMAND ""
+-)
+-include_directories(SYSTEM ${EIGEN_INCLUDE_DIR})
++find_package(eigen REQUIRED NAMES Eigen3)  # use conda's version
++include_directories(${EIGEN3_INCLUDE_DIRS})
+ 
+ # Google test
+ if(USE_TEST)
+@@ -110,17 +97,7 @@ if(USE_PYTHON)
  		)
  		include_directories(SYSTEM ${PYBIND11_INCLUDE_DIR})
  	else()
@@ -21,25 +45,3 @@ index 16fadaa..dc1ee23 100644
  	endif()
  else()
  	message(STATUS "Skip downloding pybind11")
-diff --git a/setup.py b/setup.py
-index 8664c37..75212f4 100644
---- a/setup.py
-+++ b/setup.py
-@@ -104,6 +104,17 @@ class CMakeBuild(build_ext):
-                                                               self.distribution.get_version())
-         if not os.path.exists(self.build_temp):
-             os.makedirs(self.build_temp)
-+
-+        # hack for conda-build: retrieve all env vars starting with CONDA_QULACS_,
-+        # and set them to be cmake variables
-+        extra_args = []
-+        for key, value in os.environ.items():
-+            if key.startswith('CONDA_QULACS_'):
-+                var = key[13:]
-+                extra_args.append('-D' + var + '=' + value)
-+        print("extra_args:", extra_args)
-+        cmake_args += extra_args
-+
-         subprocess.check_call(['cmake', ext.sourcedir] + cmake_args, cwd=self.build_temp, env=env)
-         subprocess.check_call(['cmake', '--build', '.', '--target', 'python'] + build_args, cwd=self.build_temp)
- 

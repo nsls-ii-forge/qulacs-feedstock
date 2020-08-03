@@ -80,23 +80,13 @@ outputs:
         # GCC and GXX are defined by conda-build
         - export C_COMPILER="${GCC}"
         - export CXX_COMPILER="${GXX}"
-        #- export _conda_build_env="$(dirname $GCC)/.."  # get build env path
-        #- export CONDA_QULACS_FETCHCONTENT_SOURCE_DIR_PYBIND11_FETCH=$_conda_build_env/include/pybind11
-        #- echo "check pybind11"
-        #- ls $_conda_build_env/include/pybind11
-        #- export CONDA_QULACS_FETCHCONTENT_SOURCE_DIR_PYBIND11_FETCH=$_conda_build_env/share/cmake/pybind11
-        #- ls $CONDA_QULACS_FETCHCONTENT_SOURCE_DIR_PYBIND11_FETCH
         - $PREFIX/bin/python setup.py install -vv  # "PYTHON" is undefined at this point
-        #- export CONDA_QULACS_pybind11_DIR=$_conda_build_env/share/cmake/pybind11
-        #- python setup.py install -vv
     requirements:
       build:
         - {{ compiler("c") }}
         - {{ compiler("cxx") }}
-        #- python
-        #- pip
-        #- setuptools
         - pybind11
+        - eigen 3.3.5
         - cmake
       host:
         - python
