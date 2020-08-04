@@ -6,6 +6,9 @@
 {% set arch = "gpu" %}  # [cuda_compiler_version != "None"]
 {% set arch = "cpu" %}  # [cuda_compiler_version == "None"]
 
+# enforce "use_simd" exposed to the recipe; "simd" is unused
+{% set simd = "1" %}    # [use_simd == "True"]
+{% set simd = "0" %}    # [use_simd == "False"]
 
 package:
   name: {{ name|lower }}-conda
@@ -21,7 +24,15 @@ source:
 build:
   skip: true  # [python_impl == "pypy" or not linux]
 
+  # avoid building qulacs-conda when there is no output
+  {% if (arch == "gpu" and use_simd == "False") %}
+  skip: true
+  {% endif %}
+
 outputs:
+
+  {% if not (arch == "gpu" and use_simd == "False") %}
+
   # this is a metapackage to ensure mutual exclusiveness
   - name: qulacs-mutex
     version: 1.0  # we only bump this when the infrastructure is changed.
@@ -35,7 +46,7 @@ outputs:
       commands:
         - echo "qulacs-mutex metapackage is built"
 
-  {% if arch == "gpu" %}
+  {% if (arch == "gpu" and use_simd == "True") %}
 
   - name: {{ name|lower }}-gpu
     version: {{ version }}
@@ -73,30 +84,20 @@ outputs:
         - nvidia-smi
         - python test_gpu.py
 
-  {% else %}
-
-  # this forces "use_simd" to be exposed to the recipe...
-  {% set simd = True %}     # [use_simd]
-  {% set simd = False %}    # [not use_simd]
+  {% elif (arch == "cpu" and use_simd == "True") %}
+  # We split the CPU package for with and without SIMD, because otherwise the only
+  # difference between the two builds is the build string, which alone would not be
+  # sufficient to generate a unique hash; one would get h1234567 instead...
+  # TODO(leofang): investigate if there's a better solution
 
   - name: {{ name|lower }}
     version: {{ version }}
     build:
-      {% if simd %}
-      {% set build = build + 100 %}
-      {% set label = '' %}
-      {% else %}
-      {% set label = '_no_simd' %}
-      {% endif %}
-      number: {{ build }}
-      string: py{{ py }}h{{ PKG_HASH }}_{{ build }}{{ label }}
+      number: {{ build + 100 }}  # preferred version
       script:
         # GCC and GXX are defined by conda-build
         - export C_COMPILER="${GCC}"
         - export CXX_COMPILER="${GXX}"
-        {% if not simd %}
-        - export CONDA_QULACS_USE_SIMD=0
-        {% endif %}
         - $PREFIX/bin/python setup.py install -vv  # "PYTHON" is undefined at this point
     requirements:
       build:
@@ -121,6 +122,46 @@ outputs:
         - python/test/test_qulacs.py
       commands:
         - python python/test/test_qulacs.py
+
+  {% elif (arch == "cpu" and use_simd == "False") %}
+
+  - name: {{ name|lower }}
+    version: {{ version }}
+    build:
+      number: {{ build }}
+      string: py{{ py }}h{{ PKG_HASH }}_{{ build }}_no_simd
+      script:
+        # GCC and GXX are defined by conda-build
+        - export C_COMPILER="${GCC}"
+        - export CXX_COMPILER="${GXX}"
+        - export CONDA_QULACS_USE_SIMD=No
+        - $PREFIX/bin/python setup.py install -vv  # "PYTHON" is undefined at this point
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - {{ compiler("cxx") }}
+        - pybind11
+        - eigen 3.3.5
+        - cmake
+      host:
+        - python
+        - setuptools
+      run:
+        - python
+        - numpy
+        - qulacs-mutex 1.0 {{ arch }}
+    test:
+      imports:
+        - qulacs
+      requires:
+        - scipy
+      source_files:
+        - python/test/test_qulacs.py
+      commands:
+        - python python/test/test_qulacs.py
+
+  {% else %}
+  {% endif %}
 
   {% endif %}
 

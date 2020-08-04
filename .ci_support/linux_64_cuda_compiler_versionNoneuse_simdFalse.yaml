@@ -7,11 +7,11 @@ channel_targets:
 cuda_compiler:
 - nvcc
 cuda_compiler_version:
-- '10.2'
+- None
 cxx_compiler:
 - gxx
 docker_image:
-- condaforge/linux-anvil-cuda:10.2
+- condaforge/linux-anvil-comp7
 pin_run_as_build:
   python:
     min_pin: x.x
@@ -24,7 +24,6 @@ target_platform:
 - linux-64
 use_simd:
 - 'False'
-- 'True'
 zip_keys:
 - - cuda_compiler_version
   - docker_image

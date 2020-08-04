@@ -23,7 +23,6 @@ python:
 target_platform:
 - linux-64
 use_simd:
-- 'False'
 - 'True'
 zip_keys:
 - - cuda_compiler_version
