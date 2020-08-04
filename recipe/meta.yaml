@@ -6,9 +6,13 @@
 {% set arch = "gpu" %}  # [cuda_compiler_version != "None"]
 {% set arch = "cpu" %}  # [cuda_compiler_version == "None"]
 
-# enforce "use_simd" exposed to the recipe; "simd" is unused
-{% set simd = "1" %}    # [use_simd == "True"]
-{% set simd = "0" %}    # [use_simd == "False"]
+# ensure use_simd is defined (needed for conda-smithy)
+{% set use_simd = use_simd or "True" %}
+
+{% if use_simd == "True" %}
+{% set build = build + 100 %}  # preferred version
+{% endif %}
+
 
 package:
   name: {{ name|lower }}-conda
@@ -46,25 +50,34 @@ outputs:
       commands:
         - echo "qulacs-mutex metapackage is built"
 
-  {% if (arch == "gpu" and use_simd == "True") %}
-
-  - name: {{ name|lower }}-gpu
+  - name: {{ name|lower }}-gpu  # [cuda_compiler_version != "None" and use_simd == "True"]
+  - name: {{ name|lower }}      # [cuda_compiler_version == "None"]
     version: {{ version }}
     build:
       number: {{ build }}
+      {% if use_simd == "True" %}
+      {% set simd_suffix = "" %}
+      {% else %}
+      {% set simd_suffix = "_no_simd" %}
+      {% endif %}
+      string: "py{{ py }}h{{ PKG_HASH }}_{{ build }}{{ simd_suffix }}"
       script:
         # GCC and GXX are defined by conda-build
         - export C_COMPILER="${GCC}"
         - export CXX_COMPILER="${GXX}"
-        - export CUDA_BIN_PATH=/usr/local/cuda/  # bad interaction between cmake and cuda on CF?
-        - $PREFIX/bin/python setup_gpu.py install -vv  # "PYTHON" is undefined at this point
-      missing_dso_whitelist:
-        - '*/libcuda.*'
+
+        - export CONDA_QULACS_USE_SIMD={{ use_simd }}  # [cuda_compiler_version == "None"]
+        - $PREFIX/bin/python setup.py install -vv      # [cuda_compiler_version == "None"]  # "PYTHON" is undefined at this point
+
+        - export CUDA_BIN_PATH=/usr/local/cuda/        # [cuda_compiler_version != "None"]  # bad interaction between cmake and cuda on CF?
+        - $PREFIX/bin/python setup_gpu.py install -vv  # [cuda_compiler_version != "None"]  # "PYTHON" is undefined at this point
+      missing_dso_whitelist:                           # [cuda_compiler_version != "None"]
+        - '*/libcuda.*'                                # [cuda_compiler_version != "None"]
     requirements:
       build:
         - {{ compiler("c") }}
         - {{ compiler("cxx") }}
-        - {{ compiler("cuda") }}
+        - {{ compiler("cuda") }}  # [cuda_compiler_version != "None"]
         - pybind11
         - eigen 3.3.5
         - cmake
@@ -78,90 +91,16 @@ outputs:
     test:
       imports:
         - qulacs
-      files:
-        - test_gpu.py
+      requires:                              # [cuda_compiler_version == "None"]
+        - scipy                              # [cuda_compiler_version == "None"]
+      source_files:                          # [cuda_compiler_version == "None"]
+        - python/test/test_qulacs.py         # [cuda_compiler_version == "None"]
+      files:                                 # [cuda_compiler_version != "None"]
+        - test_gpu.py                        # [cuda_compiler_version != "None"]
       commands:
-        - nvidia-smi
-        - python test_gpu.py
-
-  {% elif (arch == "cpu" and use_simd == "True") %}
-  # We split the CPU package for with and without SIMD, because otherwise the only
-  # difference between the two builds is the build string, which alone would not be
-  # sufficient to generate a unique hash; one would get h1234567 instead...
-  # TODO(leofang): investigate if there's a better solution
-
-  - name: {{ name|lower }}
-    version: {{ version }}
-    build:
-      number: {{ build + 100 }}  # preferred version
-      script:
-        # GCC and GXX are defined by conda-build
-        - export C_COMPILER="${GCC}"
-        - export CXX_COMPILER="${GXX}"
-        - $PREFIX/bin/python setup.py install -vv  # "PYTHON" is undefined at this point
-    requirements:
-      build:
-        - {{ compiler("c") }}
-        - {{ compiler("cxx") }}
-        - pybind11
-        - eigen 3.3.5
-        - cmake
-      host:
-        - python
-        - setuptools
-      run:
-        - python
-        - numpy
-        - qulacs-mutex 1.0 {{ arch }}
-    test:
-      imports:
-        - qulacs
-      requires:
-        - scipy
-      source_files:
-        - python/test/test_qulacs.py
-      commands:
-        - python python/test/test_qulacs.py
-
-  {% elif (arch == "cpu" and use_simd == "False") %}
-
-  - name: {{ name|lower }}
-    version: {{ version }}
-    build:
-      number: {{ build }}
-      string: py{{ py }}h{{ PKG_HASH }}_{{ build }}_no_simd
-      script:
-        # GCC and GXX are defined by conda-build
-        - export C_COMPILER="${GCC}"
-        - export CXX_COMPILER="${GXX}"
-        - export CONDA_QULACS_USE_SIMD=No
-        - $PREFIX/bin/python setup.py install -vv  # "PYTHON" is undefined at this point
-    requirements:
-      build:
-        - {{ compiler("c") }}
-        - {{ compiler("cxx") }}
-        - pybind11
-        - eigen 3.3.5
-        - cmake
-      host:
-        - python
-        - setuptools
-      run:
-        - python
-        - numpy
-        - qulacs-mutex 1.0 {{ arch }}
-    test:
-      imports:
-        - qulacs
-      requires:
-        - scipy
-      source_files:
-        - python/test/test_qulacs.py
-      commands:
-        - python python/test/test_qulacs.py
-
-  {% else %}
-  {% endif %}
+        - python python/test/test_qulacs.py  # [cuda_compiler_version == "None"]
+        - nvidia-smi                         # [cuda_compiler_version != "None"]
+        - python test_gpu.py                 # [cuda_compiler_version != "None"]
 
   {% endif %}
 
