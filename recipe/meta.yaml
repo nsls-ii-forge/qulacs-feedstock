@@ -3,14 +3,25 @@
 {% set sha256 = "7c3909ae63d352ed4b1481d63093cb5971c120c7577353e591a323b7a3d41ada" %}
 {% set build = 2 %}
 
-{% set arch = "gpu" %}  # [cuda_compiler_version != "None"]
-{% set arch = "cpu" %}  # [cuda_compiler_version == "None"]
-
-# ensure use_simd is defined (needed for conda-smithy)
+# ensure the variants are defined (needed for conda-smithy)
 {% set use_simd = use_simd or "True" %}
+{% set cuda_compiler_version = cuda_compiler_version or "undefined" %}
 
 {% if use_simd == "True" %}
 {% set build = build + 100 %}  # preferred version
+{% set simd_suffix = "" %}
+{% else %}
+{% set simd_suffix = "_no_simd" %}
+{% endif %}
+
+{% if cuda_compiler_version != "undefined" %}
+  {% if cuda_compiler_version != "None" %}
+    {% set arch = "gpu" %}
+    {% set pkg_name = "-gpu" %}
+  {% else %}
+    {% set arch = "cpu" %}
+    {% set pkg_name = "" %}
+  {% endif %}
 {% endif %}
 
 
@@ -35,13 +46,15 @@ build:
 
 outputs:
 
-  {% if not (arch == "gpu" and use_simd == "False") %}
+  {% if not (cuda_compiler_version != "None" and use_simd == "False") %}
 
   # this is a metapackage to ensure mutual exclusiveness
   - name: qulacs-mutex
-    version: 1.0  # we only bump this when the infrastructure is changed.
+    # we only bump this when the infrastructure is changed.
+    version: 1.0
     build:
-      number: 0   # don't touch this
+      # don't touch this
+      number: 0
       string: {{ arch }}
       run_exports:
         - {{ pin_subpackage('qulacs-mutex', exact=True) }}
@@ -50,34 +63,28 @@ outputs:
       commands:
         - echo "qulacs-mutex metapackage is built"
 
-  - name: {{ name|lower }}-gpu  # [cuda_compiler_version != "None" and use_simd == "True"]
-  - name: {{ name|lower }}      # [cuda_compiler_version == "None"]
+  - name: "{{ name|lower }}{{ pkg_name }}"
     version: {{ version }}
     build:
       number: {{ build }}
-      {% if use_simd == "True" %}
-      {% set simd_suffix = "" %}
-      {% else %}
-      {% set simd_suffix = "_no_simd" %}
-      {% endif %}
       string: "py{{ py }}h{{ PKG_HASH }}_{{ build }}{{ simd_suffix }}"
       script:
         # GCC and GXX are defined by conda-build
         - export C_COMPILER="${GCC}"
         - export CXX_COMPILER="${GXX}"
 
-        - export CONDA_QULACS_USE_SIMD={{ use_simd }}  # [cuda_compiler_version == "None"]
-        - $PREFIX/bin/python setup.py install -vv      # [cuda_compiler_version == "None"]  # "PYTHON" is undefined at this point
+        - export CONDA_QULACS_USE_SIMD={{ use_simd }}       # [cuda_compiler_version == "None"]
+        - $PREFIX/bin/python setup.py install -vv           # [cuda_compiler_version == "None"]  # "PYTHON" is undefined at this point
 
-        - export CUDA_BIN_PATH=/usr/local/cuda/        # [cuda_compiler_version != "None"]  # bad interaction between cmake and cuda on CF?
-        - $PREFIX/bin/python setup_gpu.py install -vv  # [cuda_compiler_version != "None"]  # "PYTHON" is undefined at this point
-      missing_dso_whitelist:                           # [cuda_compiler_version != "None"]
-        - '*/libcuda.*'                                # [cuda_compiler_version != "None"]
+        - export CUDA_BIN_PATH=/usr/local/cuda/             # [cuda_compiler_version != "None"]  # bad interaction between cmake and cuda on CF?
+        - $PREFIX/bin/python setup_gpu.py install -vv       # [cuda_compiler_version != "None"]  # "PYTHON" is undefined at this point
+      missing_dso_whitelist:                                # [cuda_compiler_version != "None"]
+        - '*/libcuda.*'                                     # [cuda_compiler_version != "None"]
     requirements:
       build:
         - {{ compiler("c") }}
         - {{ compiler("cxx") }}
-        - {{ compiler("cuda") }}  # [cuda_compiler_version != "None"]
+        - {{ compiler("cuda") }}                            # [cuda_compiler_version != "None"]
         - pybind11
         - eigen 3.3.5
         - cmake
@@ -91,18 +98,19 @@ outputs:
     test:
       imports:
         - qulacs
-      requires:                              # [cuda_compiler_version == "None"]
-        - scipy                              # [cuda_compiler_version == "None"]
-      source_files:                          # [cuda_compiler_version == "None"]
-        - python/test/test_qulacs.py         # [cuda_compiler_version == "None"]
-      files:                                 # [cuda_compiler_version != "None"]
-        - test_gpu.py                        # [cuda_compiler_version != "None"]
+      requires:                                             # [cuda_compiler_version == "None"]
+        - scipy                                             # [cuda_compiler_version == "None"]
+      source_files:                                         # [cuda_compiler_version == "None"]
+        - python/test/test_qulacs.py                        # [cuda_compiler_version == "None"]
+      files:                                                # [cuda_compiler_version != "None"]
+        - test_gpu.py                                       # [cuda_compiler_version != "None"]
       commands:
-        - python python/test/test_qulacs.py  # [cuda_compiler_version == "None"]
-        - nvidia-smi                         # [cuda_compiler_version != "None"]
-        - python test_gpu.py                 # [cuda_compiler_version != "None"]
+        - python python/test/test_qulacs.py                 # [cuda_compiler_version == "None"]
+        - nvidia-smi                                        # [cuda_compiler_version != "None"]
+        - python test_gpu.py                                # [cuda_compiler_version != "None"]
 
-  {% endif %}
+ {% else %}
+ {% endif %}
 
 about:
   home: https://github.com/qulacs/qulacs

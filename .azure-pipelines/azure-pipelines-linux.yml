@@ -10,124 +10,44 @@ jobs:
     name: BNL-machines
   strategy:
     matrix:
-      linux_64_cuda_compiler_version10.0python3.6use_simdFalse:
-        CONFIG: linux_64_cuda_compiler_version10.0python3.6use_simdFalse
+      linux_64_cuda_compiler_version10.0use_simdFalse:
+        CONFIG: linux_64_cuda_compiler_version10.0use_simdFalse
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.0
-      linux_64_cuda_compiler_version10.0python3.6use_simdTrue:
-        CONFIG: linux_64_cuda_compiler_version10.0python3.6use_simdTrue
+      linux_64_cuda_compiler_version10.0use_simdTrue:
+        CONFIG: linux_64_cuda_compiler_version10.0use_simdTrue
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.0
-      linux_64_cuda_compiler_version10.0python3.7use_simdFalse:
-        CONFIG: linux_64_cuda_compiler_version10.0python3.7use_simdFalse
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.0
-      linux_64_cuda_compiler_version10.0python3.7use_simdTrue:
-        CONFIG: linux_64_cuda_compiler_version10.0python3.7use_simdTrue
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.0
-      linux_64_cuda_compiler_version10.0python3.8use_simdFalse:
-        CONFIG: linux_64_cuda_compiler_version10.0python3.8use_simdFalse
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.0
-      linux_64_cuda_compiler_version10.0python3.8use_simdTrue:
-        CONFIG: linux_64_cuda_compiler_version10.0python3.8use_simdTrue
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.0
-      linux_64_cuda_compiler_version10.1python3.6use_simdFalse:
-        CONFIG: linux_64_cuda_compiler_version10.1python3.6use_simdFalse
+      linux_64_cuda_compiler_version10.1use_simdFalse:
+        CONFIG: linux_64_cuda_compiler_version10.1use_simdFalse
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.1
-      linux_64_cuda_compiler_version10.1python3.6use_simdTrue:
-        CONFIG: linux_64_cuda_compiler_version10.1python3.6use_simdTrue
+      linux_64_cuda_compiler_version10.1use_simdTrue:
+        CONFIG: linux_64_cuda_compiler_version10.1use_simdTrue
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.1
-      linux_64_cuda_compiler_version10.1python3.7use_simdFalse:
-        CONFIG: linux_64_cuda_compiler_version10.1python3.7use_simdFalse
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.1
-      linux_64_cuda_compiler_version10.1python3.7use_simdTrue:
-        CONFIG: linux_64_cuda_compiler_version10.1python3.7use_simdTrue
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.1
-      linux_64_cuda_compiler_version10.1python3.8use_simdFalse:
-        CONFIG: linux_64_cuda_compiler_version10.1python3.8use_simdFalse
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.1
-      linux_64_cuda_compiler_version10.1python3.8use_simdTrue:
-        CONFIG: linux_64_cuda_compiler_version10.1python3.8use_simdTrue
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.1
-      linux_64_cuda_compiler_version10.2python3.6use_simdFalse:
-        CONFIG: linux_64_cuda_compiler_version10.2python3.6use_simdFalse
+      linux_64_cuda_compiler_version10.2use_simdFalse:
+        CONFIG: linux_64_cuda_compiler_version10.2use_simdFalse
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.2
-      linux_64_cuda_compiler_version10.2python3.6use_simdTrue:
-        CONFIG: linux_64_cuda_compiler_version10.2python3.6use_simdTrue
+      linux_64_cuda_compiler_version10.2use_simdTrue:
+        CONFIG: linux_64_cuda_compiler_version10.2use_simdTrue
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.2
-      linux_64_cuda_compiler_version10.2python3.7use_simdFalse:
-        CONFIG: linux_64_cuda_compiler_version10.2python3.7use_simdFalse
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.2
-      linux_64_cuda_compiler_version10.2python3.7use_simdTrue:
-        CONFIG: linux_64_cuda_compiler_version10.2python3.7use_simdTrue
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.2
-      linux_64_cuda_compiler_version10.2python3.8use_simdFalse:
-        CONFIG: linux_64_cuda_compiler_version10.2python3.8use_simdFalse
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.2
-      linux_64_cuda_compiler_version10.2python3.8use_simdTrue:
-        CONFIG: linux_64_cuda_compiler_version10.2python3.8use_simdTrue
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.2
-      linux_64_cuda_compiler_version9.2python3.6use_simdFalse:
-        CONFIG: linux_64_cuda_compiler_version9.2python3.6use_simdFalse
+      linux_64_cuda_compiler_version9.2use_simdFalse:
+        CONFIG: linux_64_cuda_compiler_version9.2use_simdFalse
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: condaforge/linux-anvil-cuda:9.2
-      linux_64_cuda_compiler_version9.2python3.6use_simdTrue:
-        CONFIG: linux_64_cuda_compiler_version9.2python3.6use_simdTrue
+      linux_64_cuda_compiler_version9.2use_simdTrue:
+        CONFIG: linux_64_cuda_compiler_version9.2use_simdTrue
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: condaforge/linux-anvil-cuda:9.2
-      linux_64_cuda_compiler_version9.2python3.7use_simdFalse:
-        CONFIG: linux_64_cuda_compiler_version9.2python3.7use_simdFalse
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:9.2
-      linux_64_cuda_compiler_version9.2python3.7use_simdTrue:
-        CONFIG: linux_64_cuda_compiler_version9.2python3.7use_simdTrue
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:9.2
-      linux_64_cuda_compiler_version9.2python3.8use_simdFalse:
-        CONFIG: linux_64_cuda_compiler_version9.2python3.8use_simdFalse
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:9.2
-      linux_64_cuda_compiler_version9.2python3.8use_simdTrue:
-        CONFIG: linux_64_cuda_compiler_version9.2python3.8use_simdTrue
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:9.2
-      linux_64_cuda_compiler_versionNonepython3.6use_simdFalse:
-        CONFIG: linux_64_cuda_compiler_versionNonepython3.6use_simdFalse
+      linux_64_cuda_compiler_versionNoneuse_simdFalse:
+        CONFIG: linux_64_cuda_compiler_versionNoneuse_simdFalse
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: condaforge/linux-anvil-comp7
-      linux_64_cuda_compiler_versionNonepython3.6use_simdTrue:
-        CONFIG: linux_64_cuda_compiler_versionNonepython3.6use_simdTrue
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-comp7
-      linux_64_cuda_compiler_versionNonepython3.7use_simdFalse:
-        CONFIG: linux_64_cuda_compiler_versionNonepython3.7use_simdFalse
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-comp7
-      linux_64_cuda_compiler_versionNonepython3.7use_simdTrue:
-        CONFIG: linux_64_cuda_compiler_versionNonepython3.7use_simdTrue
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-comp7
-      linux_64_cuda_compiler_versionNonepython3.8use_simdFalse:
-        CONFIG: linux_64_cuda_compiler_versionNonepython3.8use_simdFalse
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-comp7
-      linux_64_cuda_compiler_versionNonepython3.8use_simdTrue:
-        CONFIG: linux_64_cuda_compiler_versionNonepython3.8use_simdTrue
+      linux_64_cuda_compiler_versionNoneuse_simdTrue:
+        CONFIG: linux_64_cuda_compiler_versionNoneuse_simdTrue
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: condaforge/linux-anvil-comp7
     maxParallel: 1
