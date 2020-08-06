@@ -10,44 +10,8 @@ jobs:
     name: BNL-machines
   strategy:
     matrix:
-      linux_64_cuda_compiler_version10.0use_simdFalse:
-        CONFIG: linux_64_cuda_compiler_version10.0use_simdFalse
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.0
-      linux_64_cuda_compiler_version10.0use_simdTrue:
-        CONFIG: linux_64_cuda_compiler_version10.0use_simdTrue
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.0
-      linux_64_cuda_compiler_version10.1use_simdFalse:
-        CONFIG: linux_64_cuda_compiler_version10.1use_simdFalse
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.1
-      linux_64_cuda_compiler_version10.1use_simdTrue:
-        CONFIG: linux_64_cuda_compiler_version10.1use_simdTrue
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.1
-      linux_64_cuda_compiler_version10.2use_simdFalse:
-        CONFIG: linux_64_cuda_compiler_version10.2use_simdFalse
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.2
-      linux_64_cuda_compiler_version10.2use_simdTrue:
-        CONFIG: linux_64_cuda_compiler_version10.2use_simdTrue
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.2
-      linux_64_cuda_compiler_version9.2use_simdFalse:
-        CONFIG: linux_64_cuda_compiler_version9.2use_simdFalse
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:9.2
-      linux_64_cuda_compiler_version9.2use_simdTrue:
-        CONFIG: linux_64_cuda_compiler_version9.2use_simdTrue
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:9.2
       linux_64_cuda_compiler_versionNoneuse_simdFalse:
         CONFIG: linux_64_cuda_compiler_versionNoneuse_simdFalse
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-comp7
-      linux_64_cuda_compiler_versionNoneuse_simdTrue:
-        CONFIG: linux_64_cuda_compiler_versionNoneuse_simdTrue
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: condaforge/linux-anvil-comp7
     maxParallel: 1

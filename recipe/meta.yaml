@@ -1,7 +1,7 @@
 {% set name = "qulacs" %}
 {% set version = "0.1.10.1" %}
 {% set sha256 = "7c3909ae63d352ed4b1481d63093cb5971c120c7577353e591a323b7a3d41ada" %}
-{% set build = 2 %}
+{% set build = 3 %}
 
 # ensure the variants are defined (needed for conda-smithy)
 {% set use_simd = use_simd or "True" %}
@@ -44,6 +44,11 @@ build:
   skip: true
   {% endif %}
 
+  # HACK 20200805: Only build no_simd version
+  {% if not (arch == "cpu" and use_simd == "False") %}
+  skip: true
+  {% endif %}
+
 outputs:
 
   {% if not (cuda_compiler_version != "None" and use_simd == "False") %}
@@ -74,6 +79,9 @@ outputs:
         - export CXX_COMPILER="${GXX}"
 
         - export CONDA_QULACS_USE_SIMD={{ use_simd }}       # [cuda_compiler_version == "None"]
+        {% if use_simd == "False" %}
+        - export CONDA_QULACS_OPT_FLAGS="-mtune=sandybridge -march=sandybridge -mfpmath=both"  # [cuda_compiler_version == "None"]
+        {% endif %}
         - $PREFIX/bin/python setup.py install -vv           # [cuda_compiler_version == "None"]  # "PYTHON" is undefined at this point
 
         - export CUDA_BIN_PATH=/usr/local/cuda/             # [cuda_compiler_version != "None"]  # bad interaction between cmake and cuda on CF?
